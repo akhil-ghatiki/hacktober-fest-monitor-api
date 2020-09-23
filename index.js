@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const rateLimit = require("express-rate-limit");
 const axios = require('axios');
 const app = express();
-// const port = 3002;
+const port = 3002;
 
 const limiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 15 minutes
