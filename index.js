@@ -33,7 +33,8 @@ app.post('/api/pr', async (req, res) => {
 
     try {
         const prUrl = new URL(prLink);
-        if (prUrl.host !== "github.com") {
+        if (prUrl.host !== "github.com" && prUrl.host !== "gitlab.com") {
+            console.log(prUrl)
             throw Error("not github.com");
         }
 
@@ -42,6 +43,7 @@ app.post('/api/pr', async (req, res) => {
             url: prLink
         })
     } catch (e) {
+        console.log(e);
         res.status(400).json({"message": "wrong PR URL"});
         return;
     }
