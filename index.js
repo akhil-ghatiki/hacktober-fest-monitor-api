@@ -4,6 +4,7 @@ const rateLimit = require("express-rate-limit");
 const axios = require('axios');
 const app = express();
 const port = process.env.PORT || 3002;
+var repoName = null; 
 
 const limiter = rateLimit({
     windowMs: 1 * 60 * 1000, // 15 minutes
@@ -33,6 +34,7 @@ app.post('/api/pr', async (req, res) => {
 
     try {
         const prUrl = new URL(prLink);
+        repoName = prUrl.pathname.split('/')[2];
         if (prUrl.host !== "github.com" && prUrl.host !== "gitlab.com") {
             console.log(prUrl)
             throw Error("not github.com");
@@ -48,7 +50,7 @@ app.post('/api/pr', async (req, res) => {
         return;
     }
 
-    const body = `pull_request,pr_link=${prLink.trim().replace(/ +/g, "-")},language=${language.trim().replace(/ +/g, "-")} value=1`;
+    const body = `pull_request,pr_link=${prLink.trim().replace(/ +/g, "-")},language=${language.trim().replace(/ +/g, "-")},repoName=${repoName} value=1`;
 
     const url = `${dbUrl}/write?db=hacktober_metrics`;
     console.log(`Sending request to: ${url}`);
