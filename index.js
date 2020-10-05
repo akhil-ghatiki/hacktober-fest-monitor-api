@@ -2,8 +2,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const rateLimit = require("express-rate-limit");
 const axios = require('axios');
+const config = require('config');
 const app = express();
-const port = process.env.PORT || 3002;
+const port = process.env.PORT || config.app.port;
 var repoName = null; 
 
 const limiter = rateLimit({
@@ -25,7 +26,7 @@ app.get('/ping', (req, res) => res.json({"message": "pong"}));
 
 app.post('/api/pr', async (req, res) => {
     console.log(req.body);
-    const {pr_link: prLink, language} = req.body;
+    const {pr_link: prLink, language, isFirstPR} = req.body;
 
     if (!prLink || !language) {
         res.status(400).json({"message": "wrong data"});
@@ -35,7 +36,7 @@ app.post('/api/pr', async (req, res) => {
     try {
         const prUrl = new URL(prLink);
         repoName = prUrl.pathname.split('/')[2];
-        if (prUrl.host !== "github.com" && prUrl.host !== "gitlab.com") {
+        if (!config.hosts.includes(prUrl.host)) {
             console.log(prUrl)
             throw Error("not github.com");
         }
@@ -50,7 +51,7 @@ app.post('/api/pr', async (req, res) => {
         return;
     }
 
-    const body = `pull_request,pr_link=${prLink.trim().replace(/ +/g, "-")},language=${language.trim().replace(/ +/g, "-")},repoName=${repoName} value=1`;
+    const body = `pull_request,pr_link=${prLink.trim().replace(/ +/g, "-")},language=${language.trim().replace(/ +/g, "-")},repoName=${repoName},isFirstPR=${isFirstPR} value=1`;
 
     const url = `${dbUrl}/write?db=hacktober_metrics`;
     console.log(`Sending request to: ${url}`);
