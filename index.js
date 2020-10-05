@@ -26,7 +26,7 @@ app.get('/ping', (req, res) => res.json({"message": "pong"}));
 
 app.post('/api/pr', async (req, res) => {
     console.log(req.body);
-    const {pr_link: prLink, language, isFirstPR} = req.body;
+    const {name, pr_link: prLink, language, isFirstPR} = req.body;
 
     if (!prLink || !language) {
         res.status(400).json({"message": "wrong data"});
@@ -51,7 +51,7 @@ app.post('/api/pr', async (req, res) => {
         return;
     }
 
-    const body = `pull_request,pr_link=${prLink.trim().replace(/ +/g, "-")},language=${language.trim().replace(/ +/g, "-")},repoName=${repoName},isFirstPR=${isFirstPR} value=1`;
+    const body = `pull_request,pr_link=${prLink.trim().replace(/ +/g, "-")},language=${language.trim().replace(/ +/g, "-")},repoName=${repoName},isFirstPR=${isFirstPR},name=${name} value=1`;
 
     const url = `${dbUrl}/write?db=hacktober_metrics`;
     console.log(`Sending request to: ${url}`);
