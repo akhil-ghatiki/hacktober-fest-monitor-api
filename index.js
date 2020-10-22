@@ -51,7 +51,7 @@ app.post('/api/pr', async (req, res) => {
         return;
     }
 
-    const body = `pull_request,pr_link=${prLink.trim().replace(/ +/g, "-")},language=${language.trim().replace(/ +/g, "-")},repoName=${repoName},isFirstPR=${isFirstPR},name=${name} value=1`;
+    const body = `pull_request,pr_link=${prLink.trim().replace(/ +/g, "-")},language=${language.trim().replace(/ +/g, "-")},repoName=${repoName},isFirstPR=${isFirstPR},name=${name.trim().replace(/ +/g, "-")} value=1`;
 
     const url = `${dbUrl}/write?db=hacktober_metrics`;
     console.log(`Sending request to: ${url}`);
